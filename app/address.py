@@ -78,11 +78,15 @@ def balance():
     account_ids = request.args.get("account_ids").split("|")
     validate_or_abort(account_ids)
     balance_sum = 0
-
+    balance_map = {}
+    
     for account_id in account_ids:
+        balance = get_account_balance(account_id)
+        balance_map[account_id] = balance
         balance_sum += get_account_balance(account_id)
 
-    return make_response(jsonify({"balance": balance_sum}), 200)
+    balance_map['total'] = balance_sum
+    return make_response(jsonify(balance_map), 200)
 
 
 def get_account_balance(account_id):
