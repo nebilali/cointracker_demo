@@ -52,21 +52,21 @@ This is a simple api server which supports adding/removing accounts and looking 
 
 ## Design Choices
 1. Database 
-	- I've created an accounts an transactions table. In both tables I've decided to represent account and transaction hashes as text strings. I originally approched representing the hashes has numbers because it would allow for a fixed storage size and would be smaller then would take less space then representing them as a string. I decided to stick with strings for this mvp, for simplicity and readability.
-	- I also debated wheather or not to us DB since we can get all the data by just using the third party api and not have to worry about syncing. I ended up using the DB because:
-		1. There is a throttling limit when using these APIs and it won't be scalable under heavy load, 
+	- I've created an accounts and transactions table. In both tables I've decided to represent account and transaction hashes as text strings. I originally approched representing the hashes as numbers because it would allow for a fixed storage size and would be smaller then would take less space then representing them as a string. I decided to stick with strings for this mvp, for simplicity and readability.
+	- I also debated wheather or not to us a DB since we can get all the data by just using the third party API and not have to worry about syncing. I ended up using the DB because:
+		1. There is a throttling limit when using these APIs and it won't be scalable under heavy load. 
 		2. We are charged per request when making API queries and just storing previously processed transactions would save on operating costs.
 		3. User tx data is publicly availible on the block chain. I don't feel any conflict in terms of data ownership here. We can add some features to allow users to remove their data if they want. 		
 2. I wanted to make sure that we update account balance through tx data instead of querying for it directly. This is for a number of reasons:
-	- We are going to need to get tx data anyway
+	- We are going to need to get tx data anyway.
 	- This lends itself to incremental update of the balance which is important for a number of follow up features such as allowing user to selectively add/remove transactions (also why I chose to store the value_change in the transactions table scheme), and continuous background syncing is a pretty straight forward next step. 
 
 
 ## Things to improve in production
 - I'd like to store the DB entries as an object that would be consistenlty used throughout our code base, likely a protocol buffer. 
 - This API server seemed to be directly called by the client so maybe straight http makes sense for a request/response framework. If this is to be more of a backend api server, I would lean towards using gRPC.
-- I ran out of time before implementing thorough unit tests, but this is something I was thinking about when starting out. The `__init__.py` file is setup to point to a test DB through configuration and that would be create for injecting a test DB when needed.
-- I also ran out of time before implementing the background sync feature. This would basically be a continuously running job that checks the transactions published in the next block against accounts that are added in our table and if it finds any it would initiate the sync endpoint on those accounts. The incremental cost here should be relatively cheap as we will be updating the transaction table greadily and the rate of new blocks being mined is graciously slow.
+- I ran out of time before implementing thorough unit tests, but this is something I was thinking about when starting out. The `__init__.py` file is setup to point to a test DB through configuration and that would be for injecting a test DB when needed.
+- I also ran out of time before implementing the background sync feature. This would basically be a continuously running job that checks the transactions published in the next block against accounts that are added in our table and if it finds any it would initiate the sync endpoint on those accounts. The incremental cost here should be relatively cheap as we will be updating the transaction table greedily and the rate of new blocks being mined is graciously slow.
 - I used absl for logging. I know flask has some internal libraries for logging. I just stuck with absl because it is was I know and it saved me some time.
 - There can be a lot of holes around monitoring. I'd like to clearly log the various reasons a request can get dropped and also define a set of statuses to return as part of the API.
 
