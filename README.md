@@ -60,6 +60,7 @@ This is a simple api server which supports adding/removing accounts and looking 
 2. I wanted to make sure that we update account balance through tx data instead of querying for it directly. This is for a number of reasons:
 	- We are going to need to get tx data anyway.
 	- This lends itself to incremental update of the balance which is important for a number of follow up features such as allowing user to selectively add/remove transactions (also why I chose to store the value_change in the transactions table scheme), and continuous background syncing is a pretty straight forward next step. 
+3. I chose to use the same structure for every api enpoint, accepting a list of account ids. I think this made sense of the transaction, sync, and balance endpoint. I also did this for the add and remove acounts endpoints, mostly for consistency. But I think in hindsight I would have liked to enforce that add, remove, and sync endpoints only handle a single account id per request for better error handling and monitoring as these endpoints modify the database and make thirdparty queries.  
 
 
 ## Things to improve in production
