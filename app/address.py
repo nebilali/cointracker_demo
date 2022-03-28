@@ -83,7 +83,7 @@ def balance():
     for account_id in account_ids:
         balance = get_account_balance(account_id)
         balance_map[account_id] = balance
-        balance_sum += get_account_balance(account_id)
+        balance_sum += balance
 
     balance_map['total'] = balance_sum
     return make_response(jsonify(balance_map), 200)
