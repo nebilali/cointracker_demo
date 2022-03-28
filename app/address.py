@@ -79,7 +79,7 @@ def balance():
     validate_or_abort(account_ids)
     balance_sum = 0
 
-    for account_id in split_accounts_ids:
+    for account_id in account_ids:
         balance_sum += get_account_balance(account_id)
 
     return make_response(jsonify({"balance": balance_sum}), 200)
@@ -95,10 +95,7 @@ def get_account_balance(account_id):
     ).fetchone()
 
     if row is None:
-
-        message = "account_id {} doesn't exist, from input: {}".format(
-            account_id, account_ids
-        )
+        message = "account_id {} doesn't exist".format(account_id)
         logging.error(message)
         # Not found error code.
         abort(404, message)
