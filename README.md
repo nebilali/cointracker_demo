@@ -78,10 +78,12 @@ This is a simple api server which supports adding/removing accounts and looking 
 
 ## Set up
 1. Go into cointracker_demo directory
-2. Run set_up.py file.
+2. Download necessary packages
+	- ```pip install -r requirements.txt```
+3. Run set_up.py file.
 	- ```source set_up.py```
 	- This is initalize the database and sets the env director.
-3. Start the server
+4. Start the server
 	-```flask run```
 
 
